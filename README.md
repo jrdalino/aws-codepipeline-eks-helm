@@ -36,6 +36,13 @@ AWS_DEFAULT_REGION = <PROJECT_REGION>
 IMAGE_REPO_NAME = <ECR_URL>
 ENV = <DEPLOYED_ENV>
 ```
+- The last phase of the deployment is the upgrade of the cluster thanks to the `helm upgrade` command. Thus, the CodeBuild process needs to be able to access the Kubernetes cluster. To do so, modify the `aws-auth` configMap with the command `kubectl edit -n kube-system configmap/aws-auth` and add the following lines below the `mapUsers` key:
+```
+- userarn: arn:aws:iam::<AWS_ACCOUNT_ID>:role/<ROLE_NAME>
+  username: <ROLE_NAME>
+  groups:
+    - system:masters
+```
 
 ## Reference
 - https://www.padok.fr/en/blog/codepipeline-eks-helm
